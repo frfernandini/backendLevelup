@@ -23,7 +23,7 @@ import java.util.Set;
 public class AuthService {
     
     private final UsuarioRepository usuarioRepository;
-    // ✅ Simplificado - sin componentes de seguridad compleja
+
     
     @Transactional
     public AuthResponse registro(RegistroRequest request) {
@@ -34,7 +34,7 @@ public class AuthService {
         Usuario usuario = new Usuario();
         usuario.setNombre(request.getNombre());
         usuario.setEmail(request.getEmail());
-        usuario.setPassword(request.getPassword());  // ✅ Sin encriptar - más simple
+        usuario.setPassword(request.getPassword());
         usuario.setTelefono(request.getTelefono());
         usuario.setDireccion(request.getDireccion());
         usuario.setActivo(true);
@@ -45,22 +45,22 @@ public class AuthService {
         
         usuario = usuarioRepository.save(usuario);
         
-        // ✅ Token simple - solo retorna datos del usuario
+
         return new AuthResponse("simple-token-" + usuario.getId(), usuario.getId(), usuario.getNombre(), 
                               usuario.getEmail(), usuario.getRoles());
     }
     
     public AuthResponse login(LoginRequest request) {
-        // ✅ Login simplificado - sin JWT complejo
+
         Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadRequestException("Usuario no encontrado"));
         
-        // Validación simple de password
+
         if (!usuario.getPassword().equals(request.getPassword())) {
             throw new BadRequestException("Contraseña incorrecta");
         }
         
-        // Token simple
+
         return new AuthResponse("simple-token-" + usuario.getId(), usuario.getId(), usuario.getNombre(),
                               usuario.getEmail(), usuario.getRoles());
     }
