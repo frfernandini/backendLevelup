@@ -8,7 +8,6 @@ import net.datafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -136,21 +135,16 @@ public class LoadDatabase {
         
         // Productos específicos de gaming
         String[][] productosData = {
-                {"PlayStation 5", "Consola de última generación", "799.99", "Consolas", "Sony"},
-                {"Xbox Series X", "Potente consola de Microsoft", "699.99", "Consolas", "Microsoft"},
-                {"Nintendo Switch OLED", "Consola híbrida con pantalla OLED", "449.99", "Consolas", "Nintendo"},
-                {"The Legend of Zelda", "Aventura épica", "59.99", "Videojuegos", "Nintendo"},
-                {"God of War Ragnarök", "Acción y mitología nórdica", "69.99", "Videojuegos", "Sony"},
-                {"Elden Ring", "RPG de mundo abierto", "59.99", "Videojuegos", "FromSoftware"},
-                {"Control DualSense", "Control inalámbrico PS5", "74.99", "Accesorios", "Sony"},
-                {"Auriculares Gaming", "Audio 7.1 surround", "129.99", "Periféricos", "Logitech"},
-                {"Teclado Mecánico RGB", "Switches azules", "149.99", "Periféricos", "Razer"},
-                {"Mouse Gaming", "16000 DPI", "79.99", "Periféricos", "Logitech"},
-                {"RTX 4070 Ti", "Tarjeta gráfica de alta gama", "899.99", "PC Gaming", "NVIDIA"},
-                {"Ryzen 7 7800X3D", "Procesador para gaming", "449.99", "PC Gaming", "AMD"},
-                {"Monitor 4K 144Hz", "Panel IPS", "699.99", "PC Gaming", "ASUS"},
-                {"Silla Gaming", "Ergonómica con soporte lumbar", "299.99", "Accesorios", "Secretlab"},
-                {"Figura Link", "Coleccionable 30cm", "149.99", "Coleccionables", "Nintendo"}
+                {"Catan", "Un clásico juego de estrategia donde los jugadores compiten por colonizar y expandirse en la isla de Catan.", "29990", "Juegos de Mesa", "Catan Studio", "/images/catan.png"},
+                {"Carcassonne", "Un juego de colocación de fichas donde los jugadores construyen el paisaje alrededor de la fortaleza medieval de Carcassonne.", "24990", "Juegos de Mesa", "Z-Man Games", "/images/carcassonne.png"},
+                {"Controlador Inalámbrico Xbox Series X", "Ofrece una experiencia de juego cómoda con botones mapeables y una respuesta táctil mejorada. Compatible con consolas Xbox y PC.", "59990", "Accesorios", "Microsoft", "/images/xbox_controller.png"},
+                {"Auriculares Gamer HyperX Cloud II", "Proporcionan un sonido envolvente de calidad con un micrófono desmontable y almohadillas de espuma viscoelástica para mayor comodidad", "79990", "Accesorios", "HyperX", "/images/hyperx_cloud.png"},
+                {"PlayStation 5", "La consola de última generación de Sony, que ofrece gráficos impresionantes y tiempos de carga ultrarrápidos para una experiencia de juego inmersiva.", "549990", "Consolas", "Sony", "/images/ps5-test.png"},
+                {"PC Gamer ASUS ROG Strix", "Un potente equipo diseñado para los gamers más exigentes, equipado con los últimos componentes para ofrecer un rendimiento excepcional", "1299990", "Computadores Gamers", "ASUS", "/images/pc gamer.png"},
+                {"Silla Gamer Secretlab Titan", "Diseñada para el máximo confort, esta silla ofrece un soporte ergonómico y personalización ajustable para sesiones de juego prolongadas.", "349990", "Sillas Gamers", "Secretlab", "/images/silla_gamer.png"},
+                {"Mouse Gamer Logitech G502 HERO", "Con sensor de alta precisión y botones personalizables, este mouse es ideal para gamers que buscan un control preciso y personalización.", "49990", "Mouse", "Logitech", "/images/mouse.png"},
+                {"Mousepad Razer Goliathus Extended Chroma", "Ofrece un área de juego amplia con iluminación RGB personalizable, asegurando una superficie suave y uniforme para el movimiento del mouse.", "29990", "Mousepad", "Razer", "/images/mousepad.png"},
+                {"Polera Gamer Personalizada 'Level-Up'", "Una camiseta cómoda y estilizada, con la posibilidad de personalizarla con tu gamer tag o diseño favorito.", "14990", "Poleras Personalizadas", "Level-Up", "/images/polera_gamer_life.png"}
         };
         
         for (String[] data : productosData) {
@@ -166,7 +160,7 @@ public class LoadDatabase {
             producto.setPrecioAnterior(precioAnterior);
             
             producto.setStock(faker.number().numberBetween(10, 100));
-            producto.setImagen("/images/productos/" + data[0].toLowerCase().replace(" ", "-") + ".jpg");
+            producto.setImagen(data[5]);  // Usar la ruta de imagen del array
             producto.setMarca(data[4]);
             producto.setSku("SKU-" + faker.number().digits(8));
             producto.setDestacado(Math.random() > 0.7); // 30% destacados
@@ -177,7 +171,7 @@ public class LoadDatabase {
             Categoria categoria = categorias.stream()
                     .filter(c -> c.getNombre().equals(catNombre))
                     .findFirst()
-                    .orElse(categorias.get(0));
+                    .orElseGet(categorias::getFirst);
             producto.setCategoria(categoria);
             
             productos.add(repository.save(producto));
