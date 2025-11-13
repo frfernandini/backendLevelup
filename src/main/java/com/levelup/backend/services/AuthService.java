@@ -6,12 +6,7 @@ import com.levelup.backend.dto.RegistroRequest;
 import com.levelup.backend.exceptions.BadRequestException;
 import com.levelup.backend.models.Usuario;
 import com.levelup.backend.repositories.UsuarioRepository;
-import com.levelup.backend.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,8 +55,7 @@ public class AuthService {
             throw new BadRequestException("Contraseña incorrecta");
         }
         
-
-        return new AuthResponse("simple-token-" + usuario.getId(), usuario.getId(), usuario.getNombre(),
-                              usuario.getEmail(), usuario.getRoles());
+        // Devolver solo token, id y nombre
+        return new AuthResponse("un_token_jwt_muy_seguro", usuario.getId(), usuario.getNombre());
     }
 }

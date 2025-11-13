@@ -57,6 +57,9 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
     
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemCarrito> itemsCarrito;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime fechaCreacion;
