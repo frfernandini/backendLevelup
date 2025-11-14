@@ -88,6 +88,38 @@ public class CarritoService {
         itemCarritoRepository.deleteByUsuarioId(usuarioId);
     }
 
+    @Transactional
+    public void aumentarCantidad(Long usuarioId, Long productoId) {
+        var itemExistente = itemCarritoRepository.findByUsuarioIdAndProductoId(usuarioId, productoId)
+                .orElseThrow(() -> new BadRequestException("El producto no está en el carrito"));
+
+        Producto producto = itemExistente.getProducto();
+
+        if (!producto.getActivo()) {
+            throw new BadRequestException("El producto no está disponible");
+        }
+
+        if (itemExistente.getCantidad() >= producto.getStock()) {
+            throw new BadRequestException("No hay suficiente stock disponible");
+        }
+
+        itemExistente.setCantidad(itemExistente.getCantidad() + 1);
+        itemCarritoRepository.save(itemExistente);
+    }
+
+    @Transactional
+    public void disminuirCantidad(Long usuarioId, Long productoId) {
+        var itemExistente = itemCarritoRepository.findByUsuarioIdAndProductoId(usuarioId, productoId)
+                .orElseThrow(() -> new BadRequestException("El producto no está en el carrito"));
+
+        if (itemExistente.getCantidad() > 1) {
+            itemExistente.setCantidad(itemExistente.getCantidad() - 1);
+            itemCarritoRepository.save(itemExistente);
+        } else {
+            itemCarritoRepository.delete(itemExistente);
+        }
+    }
+
     private ProductoDto convertirAProductoDto(ItemCarrito item) {
         Producto p = item.getProducto();
         ProductoDto dto = new ProductoDto();

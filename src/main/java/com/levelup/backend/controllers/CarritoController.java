@@ -40,4 +40,18 @@ public class CarritoController {
         carritoService.vaciarCarrito(usuarioId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/api/carrito/increase/{usuarioId}/{productoId}")
+    @Operation(summary = "Aumentar cantidad de un producto en el carrito")
+    public ResponseEntity<Void> aumentarCantidad(@PathVariable Long usuarioId, @PathVariable Long productoId) {
+        carritoService.aumentarCantidad(usuarioId, productoId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/carrito/decrease/{usuarioId}/{productoId}")
+    @Operation(summary = "Disminuir cantidad de un producto en el carrito")
+    public ResponseEntity<Void> disminuirCantidad(@PathVariable Long usuarioId, @PathVariable Long productoId) {
+        carritoService.disminuirCantidad(usuarioId, productoId);
+        return ResponseEntity.ok().build();
+    }
 }
