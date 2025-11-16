@@ -21,7 +21,7 @@ import java.util.Set;
 @Slf4j
 public class LoadDatabase {
     
-    // ✅ Ya no necesitamos PasswordEncoder - simplificado
+
     private final Faker faker = new Faker();
     
     @Bean
@@ -33,8 +33,30 @@ public class LoadDatabase {
             ContactoRepository contactoRepository) {
         
         return args -> {
-            log.info("Iniciando carga de datos de prueba...");
-            
+            log.info("Verificando datos en la base de datos...");
+
+            // Verificar si ya existen datos
+            long usuariosCount = usuarioRepository.count();
+            long categoriasCount = categoriaRepository.count();
+            long productosCount = productoRepository.count();
+
+            if (usuariosCount > 0 || categoriasCount > 0 || productosCount > 0) {
+                log.info("========================================");
+                log.info("⚠️  Datos ya existen en la base de datos");
+                log.info("========================================");
+                log.info("Usuarios: {}", usuariosCount);
+                log.info("Categorías: {}", categoriasCount);
+                log.info("Productos: {}", productosCount);
+                log.info("Blogs: {}", blogRepository.count());
+                log.info("Contactos: {}", contactoRepository.count());
+                log.info("========================================");
+                log.info("💡 Si deseas recargar los datos, cambia ddl-auto a 'create-drop'");
+                log.info("========================================");
+                return;
+            }
+
+            log.info("No hay datos, iniciando carga de datos de prueba...");
+
             // Crear usuarios
             List<Usuario> usuarios = crearUsuarios(usuarioRepository);
             log.info("✓ {} usuarios creados", usuarios.size());
@@ -56,11 +78,10 @@ public class LoadDatabase {
             log.info("✓ {} mensajes de contacto creados", contactos.size());
             
             log.info("========================================");
-            log.info("Datos de prueba cargados exitosamente!");
+            log.info("✅ Datos de prueba cargados exitosamente!");
             log.info("========================================");
             log.info("Usuario Admin - Email: admin@test.com | Password: admin123");
             log.info("Usuario Test  - Email: user@test.com  | Password: user123");
-            log.info("H2 Console: http://localhost:8080/h2-console");
             log.info("Swagger UI: http://localhost:8080/swagger-ui.html");
             log.info("========================================");
         };
@@ -69,11 +90,11 @@ public class LoadDatabase {
     private List<Usuario> crearUsuarios(UsuarioRepository repository) {
         List<Usuario> usuarios = new ArrayList<>();
         
-        // Usuario Admin - Password sin encriptar (simple)
+
         Usuario admin = new Usuario();
         admin.setNombre("Admin Usuario");
         admin.setEmail("admin@test.com");
-        admin.setPassword("admin123");  // ✅ Sin encriptar
+        admin.setPassword("admin123");
         admin.setTelefono("555-0001");
         admin.setDireccion("Calle Principal 123");
         Set<String> adminRoles = new HashSet<>();
@@ -83,11 +104,11 @@ public class LoadDatabase {
         admin.setActivo(true);
         usuarios.add(repository.save(admin));
         
-        // Usuario normal - Password sin encriptar (simple)
+
         Usuario user = new Usuario();
         user.setNombre("Test Usuario");
         user.setEmail("user@test.com");
-        user.setPassword("user123");  // ✅ Sin encriptar
+        user.setPassword("user123");
         user.setTelefono("555-0002");
         user.setDireccion("Avenida Secundaria 456");
         Set<String> userRoles = new HashSet<>();
@@ -96,12 +117,12 @@ public class LoadDatabase {
         user.setActivo(true);
         usuarios.add(repository.save(user));
         
-        // Usuarios adicionales - Password sin encriptar (simple)
+
         for (int i = 0; i < 5; i++) {
             Usuario usuario = new Usuario();
             usuario.setNombre(faker.name().fullName());
             usuario.setEmail(faker.internet().emailAddress());
-            usuario.setPassword("password123");  // ✅ Sin encriptar
+            usuario.setPassword("password123");
             usuario.setTelefono(faker.phoneNumber().cellPhone());
             usuario.setDireccion(faker.address().fullAddress());
             Set<String> roles = new HashSet<>();
@@ -133,18 +154,18 @@ public class LoadDatabase {
     private List<Producto> crearProductos(ProductoRepository repository, List<Categoria> categorias) {
         List<Producto> productos = new ArrayList<>();
         
-        // Productos específicos de gaming
+
         String[][] productosData = {
-                {"Catan", "Un clásico juego de estrategia donde los jugadores compiten por colonizar y expandirse en la isla de Catan.", "29990", "Juegos de Mesa", "Catan Studio", "/images/catan.png"},
-                {"Carcassonne", "Un juego de colocación de fichas donde los jugadores construyen el paisaje alrededor de la fortaleza medieval de Carcassonne.", "24990", "Juegos de Mesa", "Z-Man Games", "/images/carcassonne.png"},
-                {"Controlador Inalámbrico Xbox Series X", "Ofrece una experiencia de juego cómoda con botones mapeables y una respuesta táctil mejorada. Compatible con consolas Xbox y PC.", "59990", "Accesorios", "Microsoft", "/images/xbox_controller.png"},
-                {"Auriculares Gamer HyperX Cloud II", "Proporcionan un sonido envolvente de calidad con un micrófono desmontable y almohadillas de espuma viscoelástica para mayor comodidad", "79990", "Accesorios", "HyperX", "/images/hyperx_cloud.png"},
-                {"PlayStation 5", "La consola de última generación de Sony, que ofrece gráficos impresionantes y tiempos de carga ultrarrápidos para una experiencia de juego inmersiva.", "549990", "Consolas", "Sony", "/images/ps5-test.png"},
-                {"PC Gamer ASUS ROG Strix", "Un potente equipo diseñado para los gamers más exigentes, equipado con los últimos componentes para ofrecer un rendimiento excepcional", "1299990", "Computadores Gamers", "ASUS", "/images/pc gamer.png"},
-                {"Silla Gamer Secretlab Titan", "Diseñada para el máximo confort, esta silla ofrece un soporte ergonómico y personalización ajustable para sesiones de juego prolongadas.", "349990", "Sillas Gamers", "Secretlab", "/images/silla_gamer.png"},
-                {"Mouse Gamer Logitech G502 HERO", "Con sensor de alta precisión y botones personalizables, este mouse es ideal para gamers que buscan un control preciso y personalización.", "49990", "Mouse", "Logitech", "/images/mouse.png"},
-                {"Mousepad Razer Goliathus Extended Chroma", "Ofrece un área de juego amplia con iluminación RGB personalizable, asegurando una superficie suave y uniforme para el movimiento del mouse.", "29990", "Mousepad", "Razer", "/images/mousepad.png"},
-                {"Polera Gamer Personalizada 'Level-Up'", "Una camiseta cómoda y estilizada, con la posibilidad de personalizarla con tu gamer tag o diseño favorito.", "14990", "Poleras Personalizadas", "Level-Up", "/images/polera_gamer_life.png"}
+                {"Catan", "Un clásico juego de estrategia donde los jugadores compiten por colonizar y expandirse en la isla de Catan.", "29990", "Juegos de Mesa", "Catan Studio", "https://bucket-levelup.s3.us-east-1.amazonaws.com/catan.png"},
+                {"Carcassonne", "Un juego de colocación de fichas donde los jugadores construyen el paisaje alrededor de la fortaleza medieval de Carcassonne.", "24990", "Juegos de Mesa", "Z-Man Games", "https://bucket-levelup.s3.us-east-1.amazonaws.com/carcassonne.png"},
+                {"Controlador Inalámbrico Xbox Series X", "Ofrece una experiencia de juego cómoda con botones mapeables y una respuesta táctil mejorada. Compatible con consolas Xbox y PC.", "59990", "Accesorios", "Microsoft", "https://bucket-levelup.s3.us-east-1.amazonaws.com/xbox_controller.png"},
+                {"Auriculares Gamer HyperX Cloud II", "Proporcionan un sonido envolvente de calidad con un micrófono desmontable y almohadillas de espuma viscoelástica para mayor comodidad", "79990", "Accesorios", "HyperX", "https://bucket-levelup.s3.us-east-1.amazonaws.com/hyperx_cloud.png"},
+                {"PlayStation 5", "La consola de última generación de Sony, que ofrece gráficos impresionantes y tiempos de carga ultrarrápidos para una experiencia de juego inmersiva.", "549990", "Consolas", "Sony", "https://bucket-levelup.s3.us-east-1.amazonaws.com/ps5-test.png"},
+                {"PC Gamer ASUS ROG Strix", "Un potente equipo diseñado para los gamers más exigentes, equipado con los últimos componentes para ofrecer un rendimiento excepcional", "1299990", "Computadores Gamers", "ASUS", "https://bucket-levelup.s3.us-east-1.amazonaws.com/pc gamer.png"},
+                {"Silla Gamer Secretlab Titan", "Diseñada para el máximo confort, esta silla ofrece un soporte ergonómico y personalización ajustable para sesiones de juego prolongadas.", "349990", "Sillas Gamers", "Secretlab", "https://bucket-levelup.s3.us-east-1.amazonaws.com/silla_gamer.png"},
+                {"Mouse Gamer Logitech G502 HERO", "Con sensor de alta precisión y botones personalizables, este mouse es ideal para gamers que buscan un control preciso y personalización.", "49990", "Mouse", "Logitech", "https://bucket-levelup.s3.us-east-1.amazonaws.com/mouse.png"},
+                {"Mousepad Razer Goliathus Extended Chroma", "Ofrece un área de juego amplia con iluminación RGB personalizable, asegurando una superficie suave y uniforme para el movimiento del mouse.", "29990", "Mousepad", "Razer", "https://bucket-levelup.s3.us-east-1.amazonaws.com/mousepad.png"},
+                {"Polera Gamer Personalizada 'Level-Up'", "Una camiseta cómoda y estilizada, con la posibilidad de personalizarla con tu gamer tag o diseño favorito.", "14990", "Poleras Personalizadas", "Level-Up", "https://bucket-levelup.s3.us-east-1.amazonaws.com/polera_gamer_life.png"}
         };
         
         for (String[] data : productosData) {

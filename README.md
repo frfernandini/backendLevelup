@@ -1,138 +1,94 @@
-# Backend Monolítico - LevelUp Gamer 
+# Level UP - Backend API
 
-Backend Spring Boot monolítico **simplificado** para la aplicación de e-commerce de gaming desarrollada con React.
+API REST para e-commerce de productos gamer desarrollada con Spring Boot.
 
+## 🚀 Despliegue en Producción
 
-## Características
+**URL Base:** `http://levelup.us-east-1.elasticbeanstalk.com`
 
-- **Arquitectura Monolítica**: Toda la lógica de negocio en un solo proyecto
-- **Spring Boot 3.5.7**: Framework principal
-- **Spring Security**: Configurado en modo permisivo (todo público)
-- **Spring Data JPA**: Acceso a datos con Hibernate
-- **Swagger/OpenAPI**: Documentación automática de la API
-- **CORS**: Configurado para el frontend React
-- **DataFaker**: Datos de prueba realistas
+### Tecnologías
+- Java 21 (Amazon Corretto)
+- Spring Boot 3.5.7
+- PostgreSQL (AWS RDS)
+- AWS Elastic Beanstalk
 
+## 📡 Endpoints Principales
 
-##  Módulos Principales
+### Públicos
+- `GET /api/productos` - Lista de productos
+- `GET /api/productos/{id}` - Producto por ID
+- `GET /api/categorias` - Categorías
+- `POST /api/auth/login` - Login
+- `POST /api/auth/register` - Registro
+- `GET /swagger-ui.html` - Documentación API
 
-### Entidades
-- **Usuario**: Gestión de usuarios con roles y autenticación
-- **Producto**: Catálogo de productos gaming
-- **Categoria**: Organización de productos
-- **Blog**: Sistema de blogs/noticias
-- **Contacto**: Formulario de contacto
-- **Pedido/DetallePedido**: Sistema de compras/carrito
+### Protegidos (requieren JWT)
+- `POST /api/productos` - Crear producto
+- `PUT /api/productos/{id}` - Actualizar producto
+- `DELETE /api/productos/{id}` - Eliminar producto
+- `GET /api/carrito/{usuarioId}` - Ver carrito
+- `POST /api/carrito/{usuarioId}/{productoId}` - Agregar al carrito
 
-### Endpoints Principales
-
-#### Autenticación (`/api/auth`) 
-- `POST /registro` - Registrar nuevo usuario (password sin encriptar)
-- `POST /login` - Iniciar sesión (retorna token simple)
-
-#### Productos (`/api/productos`) 
-- `GET /` - Listar todos los productos
-- `GET /destacados` - Productos destacados
-- `GET /{id}` - Detalle de producto
-- `GET /categoria/{id}` - Productos por categoría
-- `GET /buscar?keyword=` - Buscar productos
-- `POST /` - Crear producto
-- `PUT /{id}` - Actualizar producto
-- `DELETE /{id}` - Eliminar producto
-
-#### Categorías (`/api/categorias`)
-- `GET /` - Listar categorías
-- `GET /{id}` - Detalle de categoría
-- `POST /` - Crear categoría
-- `PUT /{id}` - Actualizar categoría
-- `DELETE /{id}` - Eliminar categoría
-
-#### Pedidos (`/api/pedidos`) 
-- `GET /` - Listar todos los pedidos
-- `GET /{id}` - Detalle de pedido
-- `GET /usuario/{id}` - Pedidos de un usuario
-- `POST /` - Crear pedido
-- `PATCH /{id}/estado` - Actualizar estado
-
-#### Blogs (`/api/blogs`) 
-- `GET /` - Blogs publicados
-- `GET /all` - Todos los blogs
-- `GET /{id}` - Detalle de blog
-- `POST /` - Crear blog
-- `PUT /{id}` - Actualizar blog
-- `DELETE /{id}` - Eliminar blog
-
-#### Contacto (`/api/contacto`) 
-- `GET /` - Listar mensajes
-- `GET /no-leidos` - Mensajes no leídos
-- `POST /` - Enviar mensaje
-- `PATCH /{id}/leido` - Marcar como leído
+## 🛠️ Desarrollo Local
 
 ### Prerrequisitos
 - Java 21
-- Maven 3.6+
+- Maven 3.9+
+- PostgreSQL
 
-
-
-## 🔧 Configuración
-
-### Base de Datos
-
-**Desarrollo (H2):**
-- URL: `jdbc:h2:mem:fullstackdb`
-- Console: `http://localhost:8080/h2-console`
-- Usuario: `sa`
-- Password: (vacío)
-
-**Producción (MySQL):**
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/fullstackdb
-spring.datasource.username=root
-spring.datasource.password=root
+### Ejecutar localmente
+```bash
+./mvnw spring-boot:run
 ```
 
-## 🔧 Instalación y Ejecución
-Configurado para permitir:
-- `http://localhost:5173` (Vite)
-- `http://localhost:3000` (Create React App)
+### Empaquetar como JAR
+```bash
+./mvnw clean package -DskipTests
+```
 
-## 📚 Documentación API
+El JAR se genera en: `target/demo-0.0.1-SNAPSHOT.jar`
 
-Una vez ejecutada la aplicación:
-- **Swagger UI**: http://localhost:8080/swagger-ui.html
-- **OpenAPI Docs**: http://localhost:8080/api-docs
+## 🔐 Variables de Entorno (Producción)
 
-### CORS
+```
+RDS_DB_URL=jdbc:postgresql://db-levelup.chguglymjysp.us-east-1.rds.amazonaws.com:5432/levelup
+RDS_USERNAME=levelup
+RDS_PASSWORD=***
+SPRING_PROFILES_ACTIVE=prod
+```
 
-Al iniciar la aplicación se crean automáticamente:
+## 📦 Desplegar Nueva Versión
 
-**Admin:**
-- Email: `admin@test.com`
-- Password: `admin123`
-- Roles: ADMIN, USER
+1. Empaquetar: `./mvnw clean package -DskipTests`
+2. En AWS Beanstalk Console → Upload and Deploy
+3. Seleccionar: `target/demo-0.0.1-SNAPSHOT.jar`
 
-**Usuario:**
-- Email: `user@test.com`
-- Password: `user123`
-- Roles: USER
+## 👤 Usuario de Prueba
+
+```
+Email: admin@test.com
+Password: password123
+```
 
 ## 📁 Estructura del Proyecto
 
 ```
-backend/
-├── src/main/java/com/levelup/backend/
-│   ├── config/          # Configuraciones (LoadDatabase)
-│   ├── controllers/     # Controladores REST
-│   ├── dto/             # Data Transfer Objects
-│   ├── exceptions/      # Excepciones personalizadas
-│   ├── models/          # Entidades JPA
-│   ├── repositories/    # Repositorios Spring Data
-│   ├── security/        # Configuración de seguridad y JWT
-│   ├── services/        # Lógica de negocio
-│   └── DemoApplication.java
-├── src/main/resources/
-│   ├── application.properties
-│   └── application-prod.properties
-└── pom.xml
+src/main/java/com/levelup/backend/
+├── config/          # Configuración (CORS, Swagger, LoadDatabase)
+├── controllers/     # Controladores REST
+├── dto/             # Data Transfer Objects
+├── exceptions/      # Manejo de excepciones
+├── models/          # Entidades JPA
+├── repositories/    # Repositorios JPA
+├── security/        # Configuración de seguridad y JWT
+├── services/        # Lógica de negocio
+└── utils/           # Utilidades (compresión de imágenes)
 ```
+
+## 📝 Notas
+
+- Las imágenes de productos están almacenadas en AWS S3
+- La base de datos está en AWS RDS (PostgreSQL)
+- Las tablas se crean automáticamente con `ddl-auto=validate`
+- Los datos iniciales se cargan solo si no existen (idempotente)
 
