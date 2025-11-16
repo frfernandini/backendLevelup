@@ -92,5 +92,4 @@ src/main/java/com/levelup/backend/
 - Las tablas se crean automáticamente con `ddl-auto=validate`
 - Los datos iniciales se cargan solo si no existen (idempotente)
 
-<img width="525" height="610" alt="Screenshot_4" src="https://github.com/user-attachments/assets/eba2653c-3f06-4a86-a73c-5afb42f3aa3d" />
 
