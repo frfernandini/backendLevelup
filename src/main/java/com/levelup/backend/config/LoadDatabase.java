@@ -30,8 +30,9 @@ public class LoadDatabase {
             CategoriaRepository categoriaRepository,
             ProductoRepository productoRepository,
             BlogRepository blogRepository,
-            ContactoRepository contactoRepository) {
-        
+            ContactoRepository contactoRepository,
+            EventoRepository eventoRepository) {
+
         return args -> {
             log.info("Verificando datos en la base de datos...");
 
@@ -39,14 +40,16 @@ public class LoadDatabase {
             long usuariosCount = usuarioRepository.count();
             long categoriasCount = categoriaRepository.count();
             long productosCount = productoRepository.count();
+            long eventosCount = eventoRepository.count();
 
-            if (usuariosCount > 0 || categoriasCount > 0 || productosCount > 0) {
+            if (usuariosCount > 0 || categoriasCount > 0 || productosCount > 0 || eventosCount > 0) {
                 log.info("========================================");
                 log.info("⚠️  Datos ya existen en la base de datos");
                 log.info("========================================");
                 log.info("Usuarios: {}", usuariosCount);
                 log.info("Categorías: {}", categoriasCount);
                 log.info("Productos: {}", productosCount);
+                log.info("Eventos: {}", eventosCount);
                 log.info("Blogs: {}", blogRepository.count());
                 log.info("Contactos: {}", contactoRepository.count());
                 log.info("========================================");
@@ -76,7 +79,11 @@ public class LoadDatabase {
             // Crear contactos
             List<Contacto> contactos = crearContactos(contactoRepository);
             log.info("✓ {} mensajes de contacto creados", contactos.size());
-            
+
+            // Crear eventos
+            List<Evento> eventos = crearEventos(eventoRepository);
+            log.info("✓ {} eventos creados", eventos.size());
+
             log.info("========================================");
             log.info("✅ Datos de prueba cargados exitosamente!");
             log.info("========================================");
@@ -271,5 +278,27 @@ public class LoadDatabase {
         }
         
         return contactos;
+    }
+
+    private List<Evento> crearEventos(EventoRepository repository) {
+        List<Evento> eventos = new ArrayList<>();
+        String[][] eventosData = {
+            {"Torneo de League of Legends", "Participa en nuestro torneo anual de League of Legends y gana grandes premios.", "https://bucket-levelup.s3.us-east-1.amazonaws.com/lol-torneo.jpg", "Online", "Torneos"},
+            {"Lanzamiento de PS6", "Sé el primero en experimentar la nueva generación de consolas de Sony.", "https://bucket-levelup.s3.us-east-1.amazonaws.com/lanzamiento-ps6.jpg", "Tienda Principal", "Lanzamientos"},
+            {"Feria de Videojuegos Retro", "Vuelve al pasado y disfruta de los clásicos que marcaron una época.", "https://bucket-levelup.s3.us-east-1.amazonaws.com/feria-retro.jpg", "Centro de Convenciones", "Ferias"}
+        };
+
+        for (String[] data : eventosData) {
+            Evento evento = new Evento();
+            evento.setNombre(data[0]);
+            evento.setDescripcion(data[1]);
+            evento.setFechaInicio(java.time.LocalDateTime.now().plusDays(faker.number().numberBetween(10, 30)));
+            evento.setFechaFin(evento.getFechaInicio().plusHours(faker.number().numberBetween(2, 8)));
+            evento.setImagenUrl(data[2]);
+            evento.setLugar(data[3]);
+            evento.setCategoriaAsociada(data[4]);
+            eventos.add(repository.save(evento));
+        }
+        return eventos;
     }
 }
