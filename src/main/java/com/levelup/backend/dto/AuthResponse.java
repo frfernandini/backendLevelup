@@ -17,16 +17,18 @@ public class AuthResponse {
     private Long id;
     private String nombre;
     private String email;
+    private String imagenUrl;
     private Set<String> roles;
     
-    // Constructor simple para login (solo token, id, nombre)
-    public AuthResponse(String token, Long id, String nombre) {
+    // Constructor simple para login (solo token, id, nombre, imagenUrl)
+    public AuthResponse(String token, Long id, String nombre, String imagenUrl) {
         this.token = token;
         this.id = id;
         this.nombre = nombre;
+        this.imagenUrl = imagenUrl;
     }
     
-    // Constructor completo para otras respuestas
+
     public AuthResponse(String token, Long id, String nombre, String email, Set<String> roles) {
         this.token = token;
         this.id = id;

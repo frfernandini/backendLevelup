@@ -73,14 +73,7 @@ public class CarritoService {
         var itemExistente = itemCarritoRepository.findByUsuarioIdAndProductoId(usuarioId, productoId)
                 .orElseThrow(() -> new BadRequestException("El producto no está en el carrito"));
 
-        if (itemExistente.getCantidad() > 1) {
-            // Decrementar cantidad
-            itemExistente.setCantidad(itemExistente.getCantidad() - 1);
-            itemCarritoRepository.save(itemExistente);
-        } else {
-            // Eliminar item
-            itemCarritoRepository.delete(itemExistente);
-        }
+        itemCarritoRepository.delete(itemExistente);
     }
 
     @Transactional

@@ -3,7 +3,6 @@ package com.levelup.backend.config;
 import com.levelup.backend.models.*;
 import com.levelup.backend.repositories.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +17,6 @@ import java.util.Set;
 
 @Configuration
 @RequiredArgsConstructor
-@Slf4j
 public class LoadDatabase {
     
 
@@ -34,7 +32,7 @@ public class LoadDatabase {
             EventoRepository eventoRepository) {
 
         return args -> {
-            log.info("Verificando datos en la base de datos...");
+            System.out.println("Verificando datos en la base de datos...");
 
             // Verificar si ya existen datos
             long usuariosCount = usuarioRepository.count();
@@ -43,54 +41,54 @@ public class LoadDatabase {
             long eventosCount = eventoRepository.count();
 
             if (usuariosCount > 0 || categoriasCount > 0 || productosCount > 0 || eventosCount > 0) {
-                log.info("========================================");
-                log.info("⚠️  Datos ya existen en la base de datos");
-                log.info("========================================");
-                log.info("Usuarios: {}", usuariosCount);
-                log.info("Categorías: {}", categoriasCount);
-                log.info("Productos: {}", productosCount);
-                log.info("Eventos: {}", eventosCount);
-                log.info("Blogs: {}", blogRepository.count());
-                log.info("Contactos: {}", contactoRepository.count());
-                log.info("========================================");
-                log.info("💡 Si deseas recargar los datos, cambia ddl-auto a 'create-drop'");
-                log.info("========================================");
+                System.out.println("========================================");
+                System.out.println("⚠️  Datos ya existen en la base de datos");
+                System.out.println("========================================");
+                System.out.println("Usuarios: " + usuariosCount);
+                System.out.println("Categorías: " + categoriasCount);
+                System.out.println("Productos: " + productosCount);
+                System.out.println("Eventos: " + eventosCount);
+                System.out.println("Blogs: " + blogRepository.count());
+                System.out.println("Contactos: " + contactoRepository.count());
+                System.out.println("========================================");
+                System.out.println("💡 Si deseas recargar los datos, cambia ddl-auto a 'create-drop'");
+                System.out.println("========================================");
                 return;
             }
 
-            log.info("No hay datos, iniciando carga de datos de prueba...");
+            System.out.println("No hay datos, iniciando carga de datos de prueba...");
 
             // Crear usuarios
             List<Usuario> usuarios = crearUsuarios(usuarioRepository);
-            log.info("✓ {} usuarios creados", usuarios.size());
-            
+            System.out.println("✓ " + usuarios.size() + " usuarios creados");
+
             // Crear categorías
             List<Categoria> categorias = crearCategorias(categoriaRepository);
-            log.info("✓ {} categorías creadas", categorias.size());
-            
+            System.out.println("✓ " + categorias.size() + " categorías creadas");
+
             // Crear productos
             List<Producto> productos = crearProductos(productoRepository, categorias);
-            log.info("✓ {} productos creados", productos.size());
-            
+            System.out.println("✓ " + productos.size() + " productos creados");
+
             // Crear blogs
             List<Blog> blogs = crearBlogs(blogRepository);
-            log.info("✓ {} blogs creados", blogs.size());
-            
+            System.out.println("✓ " + blogs.size() + " blogs creados");
+
             // Crear contactos
             List<Contacto> contactos = crearContactos(contactoRepository);
-            log.info("✓ {} mensajes de contacto creados", contactos.size());
+            System.out.println("✓ " + contactos.size() + " mensajes de contacto creados");
 
             // Crear eventos
             List<Evento> eventos = crearEventos(eventoRepository);
-            log.info("✓ {} eventos creados", eventos.size());
+            System.out.println("✓ " + eventos.size() + " eventos creados");
 
-            log.info("========================================");
-            log.info("✅ Datos de prueba cargados exitosamente!");
-            log.info("========================================");
-            log.info("Usuario Admin - Email: admin@test.com | Password: admin123");
-            log.info("Usuario Test  - Email: user@test.com  | Password: user123");
-            log.info("Swagger UI: http://localhost:8080/swagger-ui.html");
-            log.info("========================================");
+            System.out.println("========================================");
+            System.out.println("✅ Datos de prueba cargados exitosamente!");
+            System.out.println("========================================");
+            System.out.println("Usuario Admin - Email: admin@test.com | Password: admin123");
+            System.out.println("Usuario Test  - Email: user@test.com  | Password: user123");
+            System.out.println("Swagger UI: http://localhost:8080/swagger-ui.html");
+            System.out.println("========================================");
         };
     }
     
@@ -283,7 +281,7 @@ public class LoadDatabase {
     private List<Evento> crearEventos(EventoRepository repository) {
         List<Evento> eventos = new ArrayList<>();
         String[][] eventosData = {
-            {"Torneo de League of Legends", "Participa en nuestro torneo anual de League of Legends y gana grandes premios.", "https://bucket-levelup.s3.us-east-1.amazonaws.com/lol-torneo.jpg", "Online", "Torneos"},
+            {"Torneo de League of Legends", "Participa en nuestro torneo anual de League de Legends y gana grandes premios.", "https://bucket-levelup.s3.us-east-1.amazonaws.com/lol-torneo.jpg", "Online", "Torneos"},
             {"Lanzamiento de PS6", "Sé el primero en experimentar la nueva generación de consolas de Sony.", "https://bucket-levelup.s3.us-east-1.amazonaws.com/lanzamiento-ps6.jpg", "Tienda Principal", "Lanzamientos"},
             {"Feria de Videojuegos Retro", "Vuelve al pasado y disfruta de los clásicos que marcaron una época.", "https://bucket-levelup.s3.us-east-1.amazonaws.com/feria-retro.jpg", "Centro de Convenciones", "Ferias"}
         };

@@ -55,7 +55,7 @@ public class AuthService {
             throw new BadRequestException("Contraseña incorrecta");
         }
         
-        // Devolver solo token, id y nombre
-        return new AuthResponse("un_token_jwt_muy_seguro", usuario.getId(), usuario.getNombre());
+        // Devolver token, id, nombre y la URL de la imagen
+        return new AuthResponse("un_token_jwt_muy_seguro", usuario.getId(), usuario.getNombre(), usuario.getImagenUrl());
     }
 }

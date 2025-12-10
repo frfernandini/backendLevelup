@@ -35,7 +35,10 @@ public class Usuario {
     @Email(message = "Debe ser un email válido")
     @Column(nullable = false, unique = true, length = 150)
     private String email;
-    
+
+    @Column(name = "imagen_url")
+    private String imagenUrl;
+
     @NotBlank(message = "La contraseña es requerida")
     @Column(nullable = false)
     private String password;
@@ -45,6 +48,9 @@ public class Usuario {
     
     @Column(length = 255)
     private String direccion;
+
+    @Column(length = 255)
+    private String imagen;
     
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "usuario_roles", joinColumns = @JoinColumn(name = "usuario_id"))
@@ -66,4 +72,5 @@ public class Usuario {
     
     @UpdateTimestamp
     private LocalDateTime fechaActualizacion;
+
 }
